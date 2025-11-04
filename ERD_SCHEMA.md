@@ -1,3 +1,4 @@
+```mermaid
 erDiagram
     users ||--o{ projects : owns
     users }o--o{ projects : participates
