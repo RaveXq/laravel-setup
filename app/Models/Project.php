@@ -34,4 +34,13 @@ class Project extends Model
         return $this->belongsToMany(User::class, 'project_user')
             ->withPivot('role');
     }
+
+    public function isMember(User $user): bool
+    {
+        if ($this->owner_id === $user->id) {
+            return true;
+        }
+
+        return $this->users()->where('user_id', $user->id)->exists();
+    }
 }

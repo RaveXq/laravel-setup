@@ -25,12 +25,18 @@ class DatabaseSeeder extends Seeder
 
         // Створюємо ще 7 користувачів
         $users = User::factory(7)->create();
+        $users->push($testUser); // Додаємо тестового користувача до колекції
+        
+        // Створюємо тестовий проект, власником якого є Test User
+        $testProject = Project::factory()->create([
+            'owner_id' => $testUser->id,
+        ]);
+        $testProject->users()->attach($testUser->id, ['role' => 'owner']);
 
-        // Додаємо тестового користувача до колекції
-        $users->push($testUser);
-
-        // Створюємо 6 проєктів з різними власниками
+        // Створюємо ще 6 проєктів з різними власниками
         $projects = collect();
+        $projects->push($testProject); // Додаємо тестовий проект до колекції
+        
         foreach ($users->random(6) as $owner) {
             $project = Project::factory()->create([
                 'owner_id' => $owner->id,
@@ -40,8 +46,8 @@ class DatabaseSeeder extends Seeder
             // Додаємо власника як учасника проєкту з роллю 'owner'
             $project->users()->attach($owner->id, ['role' => 'owner']);
 
-            // Додаємо 1-3 випадкових учасників з роллю 'member'
-            $members = $users->where('id', '!=', $owner->id)->random(rand(1, 3));
+            // Додаємо 1-2 випадкових учасників з роллю 'member'
+            $members = $users->where('id', '!=', $owner->id)->random(rand(1, 2));
             foreach ($members as $member) {
                 $project->users()->attach($member->id, ['role' => 'member']);
             }
@@ -50,6 +56,7 @@ class DatabaseSeeder extends Seeder
         // Створюємо задачі у різних проєктах
         $tasks = collect();
         foreach ($projects as $project) {
+            // Отримуємо учасників проєкту
             $projectUsers = $project->users;
 
             // Створюємо 1-2 задачі для кожного проєкту

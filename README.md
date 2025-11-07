@@ -45,11 +45,16 @@ docker compose stop
 ```bash
 docker compose up -d
 ```    
-                                                                                           
+                                                                                    
 Migrate database                                                                           
 ```bash
 docker compose exec php ./artisan migrate --seed          
 ```                                                                                        
+
+Error with access rights to logs
+```bash
+docker compose exec php chmod -R 777 storage/logs
+```
 
 ### Project links
 
